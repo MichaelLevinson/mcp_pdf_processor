@@ -1,0 +1,43 @@
+[project]
+name = "mcp_pdf_processor"
+version = "0.1.0"
+description = "PDF processing functionality for the Model Context Protocol"
+authors = [
+    {name = "Michael Levinson"}
+]
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pymupdf>=1.21.0",
+    "pydantic>=2.0.0", 
+    "aiohttp>=3.8.0",
+    "mcp>=1.1.3",
+    "torch>=2.0.0",  # For LaTeX equation extraction
+    "pix2tex>=0.1.4",  # For LaTeX equation extraction
+]
+
+[project.urls]
+"Homepage" = "https://github.com/michaellevinson/mcp_pdf_processor"
+"Bug Tracker" = "https://github.com/michaellevinson/mcp_pdf_processor/issues"
+
+[project.scripts]
+mcp_pdf_processor = "mcp_pdf_processor:main"
+
+[project.entry-points."mcp.server"]
+pdf_processor = "mcp_pdf_processor.mcp_server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mcp_pdf_processor"]
+
+[tool.hatch.build]
+src-layout = false
