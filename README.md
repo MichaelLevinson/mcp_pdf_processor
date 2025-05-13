@@ -21,23 +21,32 @@ pip install -e .
 
 To use this MCP server with Claude Desktop or Claude Code:
 
-1. Install the package:
+1. Install the MCP CLI tools if not already installed:
    ```bash
-   pip install -e .
+   pip install "mcp[cli]"
    ```
 
-2. Register the server with Claude using the MCP CLI tool:
+2. Install the server using the MCP CLI tool:
    ```bash
-   mcp server:register PDF_TOOLS --command "python -m pdf_tool_server" \
-      --working-dir "/path/to/installation/directory"
+   mcp install /path/to/pdf_tool_server.py --with-editable /path/to/mcp_pdf_processor
+   ```
+   
+   For example, if you've cloned this repository to `~/mcp_pdf_processor`:
+   ```bash
+   mcp install ~/mcp_pdf_processor/pdf_tool_server.py --with-editable ~/mcp_pdf_processor
    ```
 
-3. Verify the server is registered:
+3. For development with the MCP Inspector:
    ```bash
-   mcp server:list
+   mcp dev /path/to/pdf_tool_server.py --with-editable /path/to/mcp_pdf_processor
    ```
 
-4. In Claude Desktop or Claude Code, you can now use the PDF_TOOLS server in your conversations.
+4. In Claude Desktop, you can now use the PDF_TOOLS server in your conversations with these commands:
+   ```
+   /mcp PDF_TOOLS fetch_pdf url=https://example.com/document.pdf
+   /mcp PDF_TOOLS process_pdf hash_id=<HASH_ID> extract_latex=true
+   /mcp PDF_TOOLS read_processed_pdf filename=<FILENAME>
+   ```
 
 ## Usage
 
@@ -60,11 +69,38 @@ When the server is registered, you can ask Claude to:
 
 ## Requirements
 
-See `pyproject.toml` for detailed dependencies. Key requirements include:
-- Python 3.9+
-- PyMuPDF (PDF processing)
-- pix2tex (LaTeX equation extraction)
-- MCP 1.1.3+ (Model Context Protocol)
+The server requires the following main dependencies:
+
+- Python 3.9 or higher
+- `pymupdf`: PDF processing and text extraction
+- `mcp`: Model Context Protocol support
+- `pydantic`: Data validation and serialization
+- `aiohttp`: Asynchronous HTTP client/server
+- `torch`: For LaTeX equation extraction (optional)
+- `pix2tex`: For LaTeX equation recognition (optional)
+
+See `pyproject.toml` for the complete list of dependencies and version requirements.
+
+## Usage Examples
+
+Here's a complete example workflow for using the PDF processor with Claude Desktop:
+
+```
+# 1. Fetch a PDF without reading it
+/mcp PDF_TOOLS fetch_pdf url=https://arxiv.org/pdf/2505.05522
+
+# This returns a hash_id, which you'll use in the next step
+
+# 2. Process the PDF with LaTeX extraction
+/mcp PDF_TOOLS process_pdf hash_id=<HASH_ID> extract_latex=true
+
+# This returns a filename for the processed output
+
+# 3. Read the processed content
+/mcp PDF_TOOLS read_processed_pdf filename=<FILENAME>
+
+# Now Claude can analyze the PDF content, including any LaTeX equations
+```
 
 ## License
 
